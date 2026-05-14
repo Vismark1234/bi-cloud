@@ -12,6 +12,7 @@ from pathlib import Path
 
 from dagster import (
     AssetKey,
+    AssetSelection,
     AssetSpec,
     AssetsDefinition,
     Definitions,
@@ -320,13 +321,13 @@ if AIRBYTE_SPECS:
 if SOURCE_ASSET_SPECS:
     assets.insert(0, AssetsDefinition(specs=SOURCE_ASSET_SPECS))
 
-orquestacion_asset_keys = [spec.key for spec in DBT_MODEL_SPECS]
+orquestacion_selection = AssetSelection.groups("model", "snapshot")
 if AIRBYTE_SPECS:
-    orquestacion_asset_keys.extend(spec.key for spec in AIRBYTE_SPECS)
+    orquestacion_selection = orquestacion_selection | AssetSelection.groups("airbyte")
 
 orquestacion_diaria_0700_job = define_asset_job(
     name="orquestacion_diaria_0700_job",
-    selection=orquestacion_asset_keys,
+    selection=orquestacion_selection,
 )
 
 orquestacion_diaria_0700_schedule = ScheduleDefinition(
