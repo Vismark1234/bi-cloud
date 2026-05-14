@@ -226,6 +226,40 @@ def _load_specs(manifest_path: Path) -> tuple[list[AssetSpec], list[AssetSpec]]:
     return source_specs, model_specs
 
 
+def _toposort_specs(specs: list[AssetSpec]) -> list[AssetSpec]:
+    key_to_spec = {spec.key: spec for spec in specs}
+    pending_deps: dict[AssetKey, set[AssetKey]] = {}
+    dependents: dict[AssetKey, set[AssetKey]] = {spec.key: set() for spec in specs}
+
+    for spec in specs:
+        deps = set()
+        for dep in spec.deps:
+            dep_key = getattr(dep, "asset_key", dep)
+            if dep_key in key_to_spec:
+                deps.add(dep_key)
+                dependents[dep_key].add(spec.key)
+        pending_deps[spec.key] = deps
+
+    ready = sorted((key for key, deps in pending_deps.items() if not deps), key=str)
+    ordered: list[AssetSpec] = []
+
+    while ready:
+        key = ready.pop(0)
+        ordered.append(key_to_spec[key])
+        for child_key in sorted(dependents[key], key=str):
+            child_pending = pending_deps[child_key]
+            child_pending.discard(key)
+            if not child_pending and key_to_spec[child_key] not in ordered:
+                if child_key not in ready:
+                    ready.append(child_key)
+                    ready.sort(key=str)
+
+    if len(ordered) != len(specs):
+        return specs
+
+    return ordered
+
+
 _ensure_manifest()
 SOURCE_SPECS, MODEL_SPECS = _load_specs(MANIFEST_PATH)
 AIRBYTE_SPECS: list[AssetSpec] = []
@@ -286,7 +320,7 @@ if AIRBYTE_KEYS:
     # Para visualizar el flujo como: Airbyte -> raw_sources -> modelos dbt.
     SOURCE_ASSET_SPECS = [_spec_with_extra_deps(spec, AIRBYTE_KEYS) for spec in SOURCE_SPECS]
 
-DBT_MODEL_SPECS = MODEL_SPECS
+DBT_MODEL_SPECS = _toposort_specs(MODEL_SPECS)
 
 
 @multi_asset(
