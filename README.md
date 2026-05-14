@@ -74,9 +74,31 @@ Importante:
 ## Listo para Dagster Cloud
 
 - El repositorio ya incluye `dagster_cloud.yaml` en la raiz, como pide la documentacion oficial de Dagster+.
+- El repositorio ya incluye `pyproject.toml`, que es la estructura moderna que usa la guia oficial de Dagster+ Serverless.
 - `workspace.yaml` queda solo para desarrollo local OSS.
 - El `manifest.json` de dbt no se versiona; Dagster lo regenera con `dbt parse` cuando hace falta.
 - El schedule `orquestacion_diaria_0700_schedule` queda en estado detenido por defecto para evitar ejecuciones antes de configurar secretos.
+
+## Dagster+ Serverless
+
+Segun la guia oficial de Dagster+ Serverless, el proyecto debe poder instalarse como paquete Python y exponer un unico modulo raiz para Dagster. Este repositorio ya queda preparado con:
+
+- `pyproject.toml`
+- `dagster_project` como modulo raiz
+- `dagster_cloud.yaml` para compatibilidad con configuraciones heredadas
+
+Antes del primer run en la nube, aun debes cargar en Dagster+ los secretos de Snowflake:
+
+- `DBT_TARGET`
+- `DBT_SNOWFLAKE_ACCOUNT`
+- `DBT_SNOWFLAKE_USER`
+- `DBT_SNOWFLAKE_PASSWORD`
+- `DBT_SNOWFLAKE_ROLE`
+- `DBT_SNOWFLAKE_DATABASE`
+- `DBT_SNOWFLAKE_WAREHOUSE`
+- `DBT_SNOWFLAKE_SCHEMA`
+- `DBT_SNOWFLAKE_SNAPSHOT_SCHEMA`
+- `DBT_THREADS`
 
 ## Antes de subir a GitHub
 
