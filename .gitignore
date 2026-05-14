@@ -1,0 +1,32 @@
+# Entornos y archivos locales
+.env
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Dagster
+.dagster_home/
+.tmp_dagster_home_*/
+
+# dbt
+dbt_project/target/
+dbt_project/logs/
+dbt_project/dbt_packages/
+dbt_project/.user.yml
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+
+# Git / editor
+.DS_Store
+Thumbs.db

@@ -1,0 +1,15 @@
+dbt_dwh_transportes:
+  target: "{{ env_var('DBT_TARGET', 'dev') }}"
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT', 'TU_ACCOUNT_SNOWFLAKE') }}"
+      user: "{{ env_var('DBT_SNOWFLAKE_USER', 'TU_USUARIO_SNOWFLAKE') }}"
+      password: "{{ env_var('DBT_SNOWFLAKE_PASSWORD', 'CAMBIAR_POR_PASSWORD_REAL') }}"
+      role: "{{ env_var('DBT_SNOWFLAKE_ROLE', 'TU_ROLE_SNOWFLAKE') }}"
+      database: "{{ env_var('DBT_SNOWFLAKE_DATABASE', 'TU_DATABASE_SNOWFLAKE') }}"
+      warehouse: "{{ env_var('DBT_SNOWFLAKE_WAREHOUSE', 'TU_WAREHOUSE_SNOWFLAKE') }}"
+      schema: "{{ env_var('DBT_SNOWFLAKE_SCHEMA', 'DWH_DEV_CLOUD') }}"
+      threads: "{{ env_var('DBT_THREADS', '4') | int }}"
+      client_session_keep_alive: false
+      query_tag: "dbt_dwh_transportes_dev"

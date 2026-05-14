@@ -1,0 +1,52 @@
+﻿name: "dbt_dwh_transportes"
+version: "1.0.0"
+config-version: 2
+
+profile: "dbt_dwh_transportes"
+
+model-paths: ["models"]
+snapshot-paths: ["snapshots"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+seed-paths: ["seeds"]
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+vars:
+  raw_database: "PROYECTO_BI_TRANSPORTE_V2"
+  schema_comercial: "MYSQL_COMERCIAL|"
+  schema_ops: "PG_OPS"
+  schema_fin: "SQLSERVER_FIN"
+  schema_tel: "MONGO_TELEMETRIA"
+  calendar_start: "2015-01-01"
+  calendar_end: "2030-12-31"
+  telemetry_expected_interval_minutes: 30
+  telemetry_gap_minutes: 60
+  critical_temp_motor_c: 95
+  critical_speed_kmh: 100
+  maintenance_window_days: 30
+  monthly_fte_hours: 160
+
+models:
+  dbt_dwh_transportes:
+    +persist_docs:
+      relation: true
+      columns: true
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      dimensions:
+        +materialized: table
+      facts:
+        +materialized: table
+
+snapshots:
+  dbt_dwh_transportes:
+    +target_schema: "{{ env_var('DBT_SNOWFLAKE_SNAPSHOT_SCHEMA', 'SNAPSHOTS_DWH_CLOUD') }}"
+
+

@@ -1,0 +1,20 @@
+select
+  origen_evento,
+  id_tracking_evento,
+  id_envio,
+  id_viaje,
+  id_ruta,
+  id_sucursal,
+  id_vehiculo,
+  id_conductor,
+  id_tipo_tracking_evento,
+  {{ date_key('ts_evento') }} as id_fecha_evento,
+  {{ time_key('ts_evento') }} as id_hora_evento,
+  cantidad_eventos,
+  coalesce(evento_critico_flag, 0) as evento_critico_flag,
+  coalesce(alerta_critica_flag, 0) as alerta_critica_flag,
+  coalesce(gap_desde_evento_prev_min, 0) as gap_desde_evento_prev_min,
+  coalesce(temperatura_motor_c, 0) as temperatura_motor_c,
+  coalesce(velocidad_kmh, 0) as velocidad_kmh,
+  coalesce(mantenimiento_correctivo_30d_flag, 0) as mantenimiento_correctivo_30d_flag
+from {{ ref('int_tracking_eventos') }}

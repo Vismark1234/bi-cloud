@@ -1,0 +1,13 @@
+.git
+.env
+.venv
+venv
+__pycache__
+.pytest_cache
+.dagster_home
+dbt_project/target
+dbt_project/logs
+dbt_project/dbt_packages
+*.pyc
+*.pyo
+*.log

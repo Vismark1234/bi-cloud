@@ -1,0 +1,6 @@
+dagster==1.12.20
+dagster-webserver==1.12.20
+dagster-dg-cli==1.12.20
+dagster-cloud==1.12.20
+dbt-core==1.11.7
+dbt-snowflake==1.11.3

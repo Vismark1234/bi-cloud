@@ -1,0 +1,6 @@
+locations:
+  - location_name: bi_transportes_orquestacion
+    code_source:
+      package_name: dagster_project
+    build:
+      directory: .

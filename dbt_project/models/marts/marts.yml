@@ -1,0 +1,350 @@
+version: 2
+
+models:
+  - name: dim_fecha
+    columns:
+      - name: id_fecha
+        tests: [not_null, unique]
+
+  - name: dim_hora
+    columns:
+      - name: id_hora
+        tests: [not_null, unique]
+
+  - name: dim_cliente
+    columns:
+      - name: id_cliente
+        tests: [not_null, unique]
+
+  - name: dim_tarifa
+    columns:
+      - name: id_tarifa_detalle
+        tests: [not_null, unique]
+
+  - name: dim_sucursal
+    columns:
+      - name: id_sucursal
+        tests: [not_null, unique]
+
+  - name: dim_ruta
+    columns:
+      - name: id_ruta
+        tests: [not_null, unique]
+
+  - name: dim_vehiculo
+    columns:
+      - name: id_vehiculo
+        tests: [not_null, unique]
+
+  - name: dim_conductor
+    columns:
+      - name: id_conductor
+        tests: [not_null, unique]
+
+  - name: dim_factura
+    columns:
+      - name: id_factura
+        tests: [not_null, unique]
+
+  - name: dim_metodo_pago
+    columns:
+      - name: id_metodo_pago
+        tests: [not_null, unique]
+
+  - name: dim_tipo_tracking_evento
+    columns:
+      - name: id_tipo_tracking_evento
+        tests: [not_null, unique]
+
+  - name: dim_estado_envio
+    columns:
+      - name: id_estado_envio
+        tests: [not_null, unique]
+
+  - name: dim_empleado
+    columns:
+      - name: id_empleado
+        tests: [not_null, unique]
+
+  - name: dim_tipo_combustible
+    columns:
+      - name: id_tipo_combustible
+        tests: [not_null, unique]
+
+  - name: dim_categoria_gasto_fijo
+    columns:
+      - name: id_categoria_gasto_fijo
+        tests: [not_null, unique]
+
+  - name: dim_tipo_mantenimiento
+    columns:
+      - name: id_tipo_mantenimiento
+        tests: [not_null, unique]
+
+  - name: fact_orden_servicio
+    columns:
+      - name: id_orden_servicio
+        tests: [not_null, unique]
+      - name: id_cliente
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_cliente')
+                field: id_cliente
+      - name: id_tarifa_detalle
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_tarifa')
+                field: id_tarifa_detalle
+      - name: id_sucursal_origen
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_sucursal')
+                field: id_sucursal
+      - name: id_sucursal_destino
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_sucursal')
+                field: id_sucursal
+      - name: id_ruta
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_ruta')
+                field: id_ruta
+
+  - name: fact_envio
+    columns:
+      - name: id_envio
+        tests: [not_null, unique]
+      - name: id_cliente
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_cliente')
+                field: id_cliente
+      - name: id_tarifa_detalle
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_tarifa')
+                field: id_tarifa_detalle
+      - name: id_sucursal_origen
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_sucursal')
+                field: id_sucursal
+      - name: id_sucursal_destino
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_sucursal')
+                field: id_sucursal
+      - name: id_ruta
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_ruta')
+                field: id_ruta
+      - name: id_estado_envio
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_estado_envio')
+                field: id_estado_envio
+
+  - name: fact_viaje
+    columns:
+      - name: id_viaje
+        tests: [not_null, unique]
+      - name: id_ruta
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_ruta')
+                field: id_ruta
+      - name: id_vehiculo
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_vehiculo')
+                field: id_vehiculo
+      - name: id_conductor
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_conductor')
+                field: id_conductor
+
+  - name: fact_tracking_evento
+    columns:
+      - name: id_tipo_tracking_evento
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_tipo_tracking_evento')
+                field: id_tipo_tracking_evento
+      - name: id_fecha_evento
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_fecha')
+                field: id_fecha
+      - name: id_hora_evento
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_hora')
+                field: id_hora
+
+  - name: fact_facturacion
+    columns:
+      - name: id_factura_detalle
+        tests: [not_null, unique]
+      - name: id_factura
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_factura')
+                field: id_factura
+      - name: id_cliente
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_cliente')
+                field: id_cliente
+
+  - name: fact_pago
+    columns:
+      - name: id_pago
+        tests: [not_null, unique]
+      - name: id_factura
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_factura')
+                field: id_factura
+      - name: id_metodo_pago
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_metodo_pago')
+                field: id_metodo_pago
+
+  - name: fact_rrhh_mensual
+    columns:
+      - name: id_empleado
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_empleado')
+                field: id_empleado
+      - name: id_sucursal
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_sucursal')
+                field: id_sucursal
+      - name: id_fecha_periodo
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_fecha')
+                field: id_fecha
+
+  - name: fact_abastecimiento_combustible
+    columns:
+      - name: id_abastecimiento
+        tests: [not_null, unique]
+      - name: id_vehiculo
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_vehiculo')
+                field: id_vehiculo
+      - name: id_sucursal
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_sucursal')
+                field: id_sucursal
+      - name: id_fecha_abastecimiento
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_fecha')
+                field: id_fecha
+      - name: id_hora_abastecimiento
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_hora')
+                field: id_hora
+      - name: id_tipo_combustible
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_tipo_combustible')
+                field: id_tipo_combustible
+
+  - name: fact_gasto_fijo_mensual
+    columns:
+      - name: id_gasto_fijo
+        tests: [not_null, unique]
+      - name: id_sucursal
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_sucursal')
+                field: id_sucursal
+      - name: id_fecha_periodo
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_fecha')
+                field: id_fecha
+      - name: id_fecha_registro
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_fecha')
+                field: id_fecha
+      - name: id_categoria_gasto_fijo
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_categoria_gasto_fijo')
+                field: id_categoria_gasto_fijo
+
+  - name: fact_mantenimiento_vehiculo
+    columns:
+      - name: id_mantenimiento
+        tests: [not_null, unique]
+      - name: id_vehiculo
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_vehiculo')
+                field: id_vehiculo
+      - name: id_sucursal
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_sucursal')
+                field: id_sucursal
+      - name: id_fecha_ingreso
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_fecha')
+                field: id_fecha
+      - name: id_tipo_mantenimiento
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_tipo_mantenimiento')
+                field: id_tipo_mantenimiento

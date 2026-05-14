@@ -1,0 +1,55 @@
+version: 2
+
+sources:
+  - name: comercial
+    database: "{{ var('raw_database') }}"
+    schema: "{{ var('schema_comercial') }}"
+    quoting:
+      schema: true
+    tables:
+      - name: entidad
+      - name: cliente
+      - name: contrato_cliente
+      - name: tarifario
+      - name: tarifario_detalle
+      - name: orden_servicio
+
+  - name: ops
+    database: "{{ var('raw_database') }}"
+    schema: "{{ var('schema_ops') }}"
+    tables:
+      - name: sucursal
+      - name: flota
+      - name: vehiculo
+      - name: conductor_operativo
+      - name: ruta
+      - name: viaje
+      - name: viaje_carga_resumen
+      - name: envio
+      - name: evento_envio
+      - name: envio_viaje_tramo
+      - name: abastecimiento_combustible
+      - name: viaje_gasto_operativo
+      - name: viaje_liquidacion
+
+  - name: fin
+    database: "{{ var('raw_database') }}"
+    schema: "{{ var('schema_fin') }}"
+    tables:
+      - name: cuenta_credito_cliente
+      - name: reserva_credito
+      - name: factura
+      - name: factura_detalle
+      - name: pago
+      - name: mantenimiento_vehiculo
+      - name: gasto_fijo_mensual
+      - name: empleado
+      - name: nomina
+      - name: asistencia_empleado
+
+  - name: tel
+    database: "{{ var('raw_database') }}"
+    schema: "{{ var('schema_tel') }}"
+    tables:
+      - name: gps_track
+      - name: gps_alerta
