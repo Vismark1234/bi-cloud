@@ -3,12 +3,12 @@ dbt_dwh_transportes:
   outputs:
     dev:
       type: snowflake
-      account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT', 'TU_ACCOUNT_SNOWFLAKE') }}"
-      user: "{{ env_var('DBT_SNOWFLAKE_USER', 'TU_USUARIO_SNOWFLAKE') }}"
+      account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT', 'YPVPKVZ-OG27302') }}"
+      user: "{{ env_var('DBT_SNOWFLAKE_USER', 'USR_DBT_PROYECTO_BI_TRANSPORTE_V2') }}"
       password: "{{ env_var('DBT_SNOWFLAKE_PASSWORD', 'CAMBIAR_POR_PASSWORD_REAL') }}"
-      role: "{{ env_var('DBT_SNOWFLAKE_ROLE', 'TU_ROLE_SNOWFLAKE') }}"
-      database: "{{ env_var('DBT_SNOWFLAKE_DATABASE', 'TU_DATABASE_SNOWFLAKE') }}"
-      warehouse: "{{ env_var('DBT_SNOWFLAKE_WAREHOUSE', 'TU_WAREHOUSE_SNOWFLAKE') }}"
+      role: "{{ env_var('DBT_SNOWFLAKE_ROLE', 'ROLE_DBT_PROYECTO_BI_TRANSPORTE_V2') }}"
+      database: "{{ env_var('DBT_SNOWFLAKE_DATABASE', 'PROYECTO_BI_TRANSPORTE_V2') }}"
+      warehouse: "{{ env_var('DBT_SNOWFLAKE_WAREHOUSE', 'WH_PROYECTO_BI_TRANSPORTE_V2') }}"
       schema: "{{ env_var('DBT_SNOWFLAKE_SCHEMA', 'DWH_DEV_CLOUD') }}"
       threads: "{{ env_var('DBT_THREADS', '4') | int }}"
       client_session_keep_alive: false

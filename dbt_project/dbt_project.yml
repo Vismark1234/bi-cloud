@@ -17,7 +17,7 @@ clean-targets:
 
 vars:
   raw_database: "PROYECTO_BI_TRANSPORTE_V2"
-  schema_comercial: "MYSQL_COMERCIAL|"
+  schema_comercial: "MYSQL_COMERCIAL"
   schema_ops: "PG_OPS"
   schema_fin: "SQLSERVER_FIN"
   schema_tel: "MONGO_TELEMETRIA"

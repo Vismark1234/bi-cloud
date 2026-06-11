@@ -29,6 +29,10 @@ Asi puedes probar y validar cambios sin sobrescribir tu DWH actual.
 - `docs/`: documentacion funcional y tecnica copiada del proyecto original.
 - `dagster_cloud.yaml`: entrada requerida por Dagster+ para registrar la code location.
 
+Guia operativa principal:
+
+- [docs/CONFIG_AIRBYTE_DAGSTER_DBT_CLOUD.md](docs/CONFIG_AIRBYTE_DAGSTER_DBT_CLOUD.md)
+
 ## Archivos sensibles que no se suben
 
 - `.env`
@@ -54,10 +58,12 @@ Copy-Item .env.example .env
 3. Completa `.env` con tus credenciales reales de Snowflake y, si aplica, Airbyte.
 
 Importante:
-- Si tus datos ya estan cargados en Snowflake, deja `AIRBYTE_CONNECTION_IDS=` vacio.
-- En ese caso Dagster correra solo `dbt build` contra Snowflake.
+- Para orquestar la ingesta completa, carga `AIRBYTE_CLIENT_ID`, `AIRBYTE_CLIENT_SECRET`
+  y los connection IDs de Airbyte ya definidos en `.env.example`.
+- Dagster ejecutara Airbyte primero y despues `dbt build` contra Snowflake.
 - El target por defecto de este repo ya es `DWH_DEV_CLOUD`.
-- Ejecuta antes el script [scripts/bootstrap_dwh_dev_cloud.sql](<C:/Users/Vismark Choque/INTELIGENCIA DE NEGOCIOS/bi_transportes_dagster_dbt_cloud/scripts/bootstrap_dwh_dev_cloud.sql>) para crear schemas y permisos.
+- Ejecuta antes el script [scripts/bootstrap_dwh_dev_cloud.sql](scripts/bootstrap_dwh_dev_cloud.sql) para crear schemas y permisos.
+- Ejecuta [scripts/check_raw_sources.sql](scripts/check_raw_sources.sql) en Snowflake para confirmar que Airbyte ya cargo todas las fuentes esperadas por dbt.
 
 4. Verifica dbt:
 
@@ -99,6 +105,28 @@ Antes del primer run en la nube, aun debes cargar en Dagster+ los secretos de Sn
 - `DBT_SNOWFLAKE_SCHEMA`
 - `DBT_SNOWFLAKE_SNAPSHOT_SCHEMA`
 - `DBT_THREADS`
+- `AIRBYTE_API_BASE_URL`
+- `AIRBYTE_CLIENT_ID`
+- `AIRBYTE_CLIENT_SECRET`
+- `AIRBYTE_CONNECTION_ID_SQLSERVER`
+- `AIRBYTE_CONNECTION_ID_MYSQL`
+- `AIRBYTE_CONNECTION_ID_POSTGRES`
+- `AIRBYTE_CONNECTION_ID_MONGO`
+- `AIRBYTE_CONNECTION_IDS`
+- `AIRBYTE_POLL_INTERVAL_SECONDS`
+- `AIRBYTE_TIMEOUT_SECONDS`
+
+Connection IDs configurados para este proyecto:
+
+| Origen | Airbyte connection ID | Schema raw esperado en Snowflake |
+|---|---|---|
+| SQL Server | `d84d864f-bc99-4988-aa53-4bb1c3bc600c` | `SQLSERVER_FIN` |
+| MySQL | `dc6f0dc4-8471-4934-b73d-fb5c8e0dd254` | `MYSQL_COMERCIAL` |
+| PostgreSQL | `9b1a5173-1025-4d88-a710-4db8e31b2024` | `PG_OPS` |
+| MongoDB | `2452d3c9-d8e0-4465-9f5e-5e4fa370bc21` | `MONGO_TELEMETRIA` |
+
+dbt espera que esos schemas contengan todas las tablas declaradas en `dbt_project/models/sources.yml`.
+Si falta alguna fuente, no se debe borrar el modelo a ciegas: primero corrige la conexion/sync en Airbyte o confirma el cambio funcional.
 
 ## Antes de subir a GitHub
 

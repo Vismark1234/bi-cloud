@@ -30,11 +30,26 @@ MANIFEST_PATH = DBT_PROJECT_DIR / "target" / "manifest.json"
 AIRBYTE_API_BASE_URL = (os.getenv("AIRBYTE_API_BASE_URL") or "https://api.airbyte.com/v1").rstrip("/")
 AIRBYTE_CLIENT_ID = os.getenv("AIRBYTE_CLIENT_ID")
 AIRBYTE_CLIENT_SECRET = os.getenv("AIRBYTE_CLIENT_SECRET")
-AIRBYTE_CONNECTION_IDS = [
+_airbyte_ids_from_list = [
     x.strip()
     for x in (os.getenv("AIRBYTE_CONNECTION_IDS") or "").split(",")
     if x.strip()
 ]
+_airbyte_ids_from_named_env = [
+    os.getenv("AIRBYTE_CONNECTION_ID_SQLSERVER"),
+    os.getenv("AIRBYTE_CONNECTION_ID_MYSQL"),
+    os.getenv("AIRBYTE_CONNECTION_ID_POSTGRES"),
+    os.getenv("AIRBYTE_CONNECTION_ID_MONGO"),
+]
+AIRBYTE_CONNECTION_IDS = list(
+    dict.fromkeys(
+        [
+            connection_id.strip()
+            for connection_id in [*_airbyte_ids_from_list, *_airbyte_ids_from_named_env]
+            if connection_id and connection_id.strip()
+        ]
+    )
+)
 AIRBYTE_POLL_INTERVAL_SECONDS = int(os.getenv("AIRBYTE_POLL_INTERVAL_SECONDS") or "10")
 AIRBYTE_TIMEOUT_SECONDS = int(os.getenv("AIRBYTE_TIMEOUT_SECONDS") or "3600")
 
@@ -320,7 +335,10 @@ if AIRBYTE_KEYS:
     # Para visualizar el flujo como: Airbyte -> raw_sources -> modelos dbt.
     SOURCE_ASSET_SPECS = [_spec_with_extra_deps(spec, AIRBYTE_KEYS) for spec in SOURCE_SPECS]
 
-DBT_MODEL_SPECS = _toposort_specs(MODEL_SPECS)
+DBT_MODEL_SPECS = MODEL_SPECS
+if AIRBYTE_KEYS:
+    DBT_MODEL_SPECS = [_spec_with_extra_deps(spec, AIRBYTE_KEYS) for spec in DBT_MODEL_SPECS]
+DBT_MODEL_SPECS = _toposort_specs(DBT_MODEL_SPECS)
 
 
 @multi_asset(
