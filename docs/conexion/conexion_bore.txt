@@ -1,4 +1,0 @@
-Levantas un túnel por cada base local.
-* MySQL: ' bore local 3306 --to TU_SERVIDOR_BORE ' 
-* Postgres: ' bore local 5432 --to TU_SERVIDOR_BORE '
-* SQL Server: ' bore local 1433 --to TU_SERVIDOR_BORE '
