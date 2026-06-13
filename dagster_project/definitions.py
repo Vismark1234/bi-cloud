@@ -21,6 +21,8 @@ from dagster import (
     ScheduleDefinition,
     define_asset_job,
     multi_asset,
+    RetryPolicy,
+    Backoff,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -52,7 +54,8 @@ AIRBYTE_CONNECTION_IDS = list(
 )
 AIRBYTE_POLL_INTERVAL_SECONDS = int(os.getenv("AIRBYTE_POLL_INTERVAL_SECONDS") or "10")
 AIRBYTE_TIMEOUT_SECONDS = int(os.getenv("AIRBYTE_TIMEOUT_SECONDS") or "3600")
-
+AIRBYTE_DAGSTER_RETRIES = int(os.getenv("AIRBYTE_DAGSTER_RETRIES") or "2")
+AIRBYTE_DAGSTER_RETRY_DELAY_SECONDS = int(os.getenv("AIRBYTE_DAGSTER_RETRY_DELAY_SECONDS") or "20")
 
 def _run_dbt_command(args: list[str]) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
