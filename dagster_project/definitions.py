@@ -8,6 +8,7 @@ import subprocess
 import time
 import urllib.error
 import urllib.request
+import socket
 from pathlib import Path
 
 from dagster import (
@@ -102,25 +103,55 @@ def _to_asset_key(node: dict) -> AssetKey:
     return AssetKey([database, schema, name])
 
 
-def _http_json(method: str, url: str, payload: dict | None = None, token: str | None = None) -> dict:
+def _http_json(
+    method: str,
+    url: str,
+    payload: dict | None = None,
+    token: str | None = None,
+    retries: int = 5,
+    timeout: int = 180,
+) -> dict:
     data = None
     headers = {"Content-Type": "application/json"}
+
     if token:
         headers["Authorization"] = f"Bearer {token}"
+
     if payload is not None:
         data = json.dumps(payload).encode("utf-8")
 
-    req = urllib.request.Request(url=url, method=method, data=data, headers=headers)
-    try:
-        with urllib.request.urlopen(req, timeout=45) as resp:
-            body = resp.read().decode("utf-8")
-            return json.loads(body) if body else {}
-    except urllib.error.HTTPError as exc:
-        detail = exc.read().decode("utf-8", errors="ignore")
-        raise RuntimeError(f"Airbyte API HTTP {exc.code} en {url}: {detail}") from exc
-    except urllib.error.URLError as exc:
-        raise RuntimeError(f"No se pudo conectar a Airbyte API en {url}: {exc}") from exc
+    last_error = None
 
+    for attempt in range(1, retries + 1):
+        req = urllib.request.Request(
+            url=url,
+            method=method,
+            data=data,
+            headers=headers,
+        )
+
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                body = resp.read().decode("utf-8")
+                return json.loads(body) if body else {}
+
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode("utf-8", errors="ignore")
+            raise RuntimeError(
+                f"Airbyte API HTTP {exc.code} en {url}: {detail}"
+            ) from exc
+
+        except (TimeoutError, socket.timeout, urllib.error.URLError) as exc:
+            last_error = exc
+
+            if attempt < retries:
+                time.sleep(20)
+                continue
+
+    raise RuntimeError(
+        f"No se pudo conectar o leer respuesta de Airbyte API despues de "
+        f"{retries} intentos. Ultimo error: {last_error}"
+    )
 
 def _airbyte_access_token() -> str:
     if not AIRBYTE_CLIENT_ID or not AIRBYTE_CLIENT_SECRET:
